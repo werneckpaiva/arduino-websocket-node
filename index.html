@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+    <style>
+      body {
+        font-family: "Helvetica Neue", helvetica, arial;
+        padding: 15px;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul li {
+        line-height: 1.4;
+      }
+    </style>
+
+    <script>
+
+    function SignalValue(minValue, maxValue) {
+        var delta = maxValue - minValue;
+        var $progress = $("#distanceProgress");
+        var self = this;
+        $progress.attr("aria-valuemin", minValue);
+        $progress.attr("aria-valuemax", minValue);
+
+        this.newValue = function(value){
+            var rate = (value < minValue)? 0 :
+                       (value > maxValue)? 100 :
+                       parseInt(((value - minValue) / delta) * 100);
+            self.changeProgress(rate);
+            self.changeLabel(value);
+            self.changeState(value);
+        }
+        this.changeProgress = function(rate){
+            $progress.css("width", rate+"%");
+        }
+
+        this.changeLabel = function(value){
+            $progress.attr("aria-valuenow", value);
+            var roundedValue = Math.round(value);
+            $progress.find("span").html(roundedValue+"cm");
+        }
+
+        this.changeState = function(value){
+            $progress.toggleClass("progress-bar-danger", (value < 30));
+            // $progress.toggleClass("progress-bar-success", (value > 80));
+
+        }
+
+    }
+
+    $(function(){
+        var host = location.origin.replace(/^http/, 'ws')
+        var ws = new WebSocket(host);
+        var signalValue = new SignalValue(5, 100);
+        ws.onmessage = function (event) {
+            var value = JSON.parse(event.data);
+            signalValue.newValue(value);
+        };
+    })
+
+    </script>
+  </head>
+
+  <body>
+      <div class="container">
+        <h2>Distância</h2>
+        <div class="progress">
+          <div id="distanceProgress" class="progress-bar"
+                    role="progressbar"
+                    aria-valuenow="30"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    style="width:0%; min-width: 2em;">
+            <span></span>
+          </div>
+        </div>
+      </div>
+  </body>
+</html>
