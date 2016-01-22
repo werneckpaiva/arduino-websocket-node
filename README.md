@@ -14,4 +14,8 @@ Running
 -------
 ```node app.js <serial_port>```
 
+Open http://localhost:5000
+
+![screenshot](/model/sc.png)
+
 Full article at http://blog.werneckpaiva.com.br/2016/01/como-integrar-arduino-com-app-web-usando-websockets/
