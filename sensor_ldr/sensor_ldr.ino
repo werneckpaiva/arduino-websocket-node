@@ -1,6 +1,7 @@
 #define TRIG_PIN 6
 #define ECHO_PIN 5
 #define LED 2
+#define SENSOR 0
 
 void setup() {
   Serial.begin(9600);
@@ -37,14 +38,19 @@ float readDistance(){
 }
   
 void loop() {
+  int lightSign = analogRead(SENSOR);
   float distance = readDistance();
 
+  int d = 50;
   if (distance < 30 && distance > 0){
     digitalWrite(LED, HIGH);
-  } else {
-    digitalWrite(LED, LOW);
+    d = map(distance, 5, 40, 10, 250);
+    delay(50);
   }
-  Serial.println(distance);
+  digitalWrite(LED, LOW);
+  Serial.print(distance);
+  Serial.print(",");
+  Serial.println(lightSign);
   
-  delay(200);
+  delay(d);
 }

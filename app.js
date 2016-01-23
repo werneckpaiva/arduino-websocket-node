@@ -20,9 +20,11 @@ var serialport = new SerialPort(port, {
 });
 
 serialport.on('data', function(data){
-    var value = ""
-    for (p in data) value += data[p];
+    var values = ""
+    for (p in data) values += data[p];
+    var parts = values.split(",");
     wss.clients.forEach(function each(ws) {
-      ws.send(JSON.stringify(value), function() {  })
+      var o = {"dist": parts[0], "light": parts[1]};
+      ws.send(JSON.stringify(o), function() {  })
     });
 });
