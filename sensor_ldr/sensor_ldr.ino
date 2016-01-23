@@ -43,8 +43,8 @@ void loop() {
 
   int d = 50;
   if (distance < 30 && distance > 0){
+    d = map(distance, 5, 30, 50, 200);
     digitalWrite(LED, HIGH);
-    d = map(distance, 5, 40, 10, 250);
     delay(50);
   }
   digitalWrite(LED, LOW);
